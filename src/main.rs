@@ -7,6 +7,7 @@ use tdameritradeclient::{Execute, TDAClient, Account, History};
 //use subcommands: userprincipals (DONE), account (DONE), quote (DONE), history, optionchain
 
 //TODO: Split up subcommands into different files to clean it up
+//TODO: Add chrono to deal with timestamp - think how to modify incoming json or will i need to parse into objects?
 
 fn main() {
     let matches =
@@ -109,17 +110,17 @@ fn main() {
                 let resp: String;
                 if sub_m.is_present("positions")&&sub_m.is_present("orders") {
                     resp = c.getaccount(&account)
-                        .params(&Account::PositionsAndOrders.pair())
+                        .params(&[Account::PositionsAndOrders.into()])
                         .execute();
                 }
                 else if sub_m.is_present("positions") {
                     resp = c.getaccount(&account)
-                        .params(&Account::Positions.pair())
+                        .params(&[Account::Positions.into()])
                         .execute();
                 }
                 else if sub_m.is_present("orders") {
                     resp = c.getaccount(&account)
-                        .params(&Account::Orders.pair())
+                        .params(&[Account::Orders.into()])
                         .execute();
                 }
                 else {
@@ -139,26 +140,25 @@ fn main() {
         ("history", Some(sub_m)) => match sub_m.value_of("symbol") {
             Some(symbol) => {
 
-                let mut histparam = Vec::new();
+                let mut param: Vec<(&str, String)> = Vec::new();
                 // determine query parameters
                 if sub_m.is_present("period") {
-                    histparam.push(History::Period(sub_m.value_of("period").unwrap().parse().unwrap()).pair());
+                    param.push(History::Period(sub_m.value_of("period").unwrap().parse().unwrap()).into());
                 }
                 if sub_m.is_present("period_type") {
-                    histparam.push(History::PeriodType(sub_m.value_of("period_type").unwrap()).pair());
+                    param.push(History::PeriodType(sub_m.value_of("period_type").unwrap()).into());
                 }
                 if sub_m.is_present("freq") {
-                    histparam.push(History::Frequency(sub_m.value_of("freq").unwrap().parse().unwrap()).pair());
+                    param.push(History::Frequency(sub_m.value_of("freq").unwrap().parse().unwrap()).into());
                 }
                 if sub_m.is_present("freq_type") {
-                    histparam.push(History::FrequencyType(sub_m.value_of("freq_type").unwrap()).pair());
+                    param.push(History::FrequencyType(sub_m.value_of("freq_type").unwrap()).into());
                 }
-                let array = histparam.iter();               
-                println!("ARRAY{:?}", array);
-                println!("SYMBOL{:?}", symbol);
-                // let resp: String = c.gethistory(&symbol)
-                //     .execute();
-                // println!("{}", resp)
+                let request = c.gethistory(&symbol);
+                let response: String = 
+                    if !param.is_empty() { request.params(&param).execute() }
+                    else { request.execute() };
+                println!("{}", response)
             }
             None => println!("Missing symbol"),
         },
