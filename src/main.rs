@@ -2,7 +2,7 @@
 extern crate clap;
 use clap::{App, Arg, SubCommand};
 use std::env;
-use tdameritradeclient::{Execute, TDAClient, Account, History};
+use tdameritradeclient::{TDAClient, Account, History};
 
 //use subcommands: userprincipals (DONE), account (DONE), quote (DONE), history, optionchain
 
@@ -102,29 +102,23 @@ fn main() {
 
     match matches.subcommand() {
         ("userprincipals", Some(_)) => {
-            let resp: String = c.getuserprincipals().execute();
+            let resp: String = c.getuserprincipals();
             println!("{}", &resp);
         }
         ("account", Some(sub_m)) => match sub_m.value_of("account_id") {
             Some(account) => {
                 let resp: String;
                 if sub_m.is_present("positions")&&sub_m.is_present("orders") {
-                    resp = c.getaccount(&account)
-                        .params(&[Account::PositionsAndOrders.into()])
-                        .execute();
+                    resp = c.getaccount(&account, &[Account::PositionsAndOrders]);
                 }
                 else if sub_m.is_present("positions") {
-                    resp = c.getaccount(&account)
-                        .params(&[Account::Positions.into()])
-                        .execute();
+                    resp = c.getaccount(&account, &[Account::Positions]);
                 }
                 else if sub_m.is_present("orders") {
-                    resp = c.getaccount(&account)
-                        .params(&[Account::Orders.into()])
-                        .execute();
+                    resp = c.getaccount(&account, &[Account::Orders]);
                 }
                 else {
-                    resp = c.getaccount(&account).execute();
+                    resp = c.getaccount(&account, &[]);
                 }
                 println!("{}", resp)
             }
@@ -132,7 +126,7 @@ fn main() {
         },
         ("quote", Some(sub_m)) => match sub_m.value_of("symbols") {
             Some(symbols) => {
-                let resp: String = c.getquotes(&symbols).execute();
+                let resp: String = c.getquotes(&symbols);
                 println!("{}", resp)
             }
             None => println!("Missing symbols"),
@@ -140,24 +134,21 @@ fn main() {
         ("history", Some(sub_m)) => match sub_m.value_of("symbol") {
             Some(symbol) => {
 
-                let mut param: Vec<(&str, String)> = Vec::new();
+                let mut param: Vec<History> = Vec::new();
                 // determine query parameters
                 if sub_m.is_present("period") {
-                    param.push(History::Period(sub_m.value_of("period").unwrap().parse().unwrap()).into());
+                    param.push(History::Period(sub_m.value_of("period").unwrap().parse().unwrap()));
                 }
                 if sub_m.is_present("period_type") {
-                    param.push(History::PeriodType(sub_m.value_of("period_type").unwrap()).into());
+                    param.push(History::PeriodType(sub_m.value_of("period_type").unwrap()));
                 }
                 if sub_m.is_present("freq") {
-                    param.push(History::Frequency(sub_m.value_of("freq").unwrap().parse().unwrap()).into());
+                    param.push(History::Frequency(sub_m.value_of("freq").unwrap().parse().unwrap()));
                 }
                 if sub_m.is_present("freq_type") {
-                    param.push(History::FrequencyType(sub_m.value_of("freq_type").unwrap()).into());
+                    param.push(History::FrequencyType(sub_m.value_of("freq_type").unwrap()));
                 }
-                let request = c.gethistory(&symbol);
-                let response: String = 
-                    if !param.is_empty() { request.params(&param).execute() }
-                    else { request.execute() };
+                let response: String = c.gethistory(&symbol, &param[..]);
                 println!("{}", response)
             }
             None => println!("Missing symbol"),
@@ -168,4 +159,15 @@ fn main() {
         },
         _ => {}
     }
+}
+
+
+// or implement with FROM trait and chrono - do i need a datetime struct?
+
+fn epochtodatetime(epoch: u64) -> String {
+    unimplemented!();
+}
+
+fn datetimetoepoch(dt: String) -> u64 {
+    unimplemented!();
 }
