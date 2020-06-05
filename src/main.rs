@@ -1,103 +1,33 @@
+//! # tdacli
+//! Command line client for the tdameritradeclient
+//! subcommands split out as follows into separate modules and corresponding to the tdameritradeclient
+//!
+//! `account -> getuserprinicipals(), getaccount(accountid)`
+//! Defines items that deal with account and user information
+//!
+//! `quote -> getquote(symbols), gethistory(symbol, History param)`
+//! Defines items that deal with quotes either live or historical
+//!
+//! `optionchain -> getoptionchain(symbol, OptionChain param)`
+//! Returns option chain data for a symbol
+//!
+//! `orders` -> getsavedorders(accoundid), getorders(accountid)`
+//! Defines items that deal with orders live or saved
+//!
 #[macro_use(crate_version)]
 extern crate clap;
-use clap::{App, Arg, SubCommand};
+
+pub mod cli;
+use cli::cli_matches;
+
 use std::env;
 use tdameritradeclient::{TDAClient, Account, History};
 
-//use subcommands: userprincipals (DONE), account (DONE), quote (DONE), history, optionchain
-
-//TODO: Split up subcommands into different files to clean it up
-//TODO: Add chrono to deal with timestamp - think how to modify incoming json or will i need to parse into objects?
+// TODO: Refactor subcommands to separate files
 
 fn main() {
-    let matches =
-        App::new("TDAmeritrade API CLI")
-            .version(crate_version!())
-            .about("CLI Interface into tdameritradeclient rust library")
-            .subcommand(SubCommand::with_name("userprincipals").about("Fetches User Principals"))
-            .subcommand(
-                SubCommand::with_name("account")
-                    .about("Retrieve account information for <account_id>")
-                    .arg(
-                        Arg::with_name("account_id")
-                            //.takes_value(true)
-                            //.index(1)
-                            .help("Retrieves account information for linked account_id")
-                    )
-                    .arg(
-                        Arg::with_name("positions")
-                            .short("p")
-                            .help("includes account positions")
-                    )
-                    .arg(
-                        Arg::with_name("orders")
-                            .short("o")
-                            .help("includes account orders")
-                    )
-            )
-            .subcommand(
-                SubCommand::with_name("quote")
-                    .about("Retrieve quotes for [symbols]")
-                    .arg(Arg::with_name("symbols")
-                        .help("Retrieves quotes of supplied [symbols] in format \"sym1,sym2,sym3\""
-                    ))
-            )
-            .subcommand(
-                SubCommand::with_name("history")
-                    .about("Retrieve history for one <symbol>. \r\n'*' indicates default value in argument values.")
-                    .arg( //TODO: symbol shouldn't be an argument with value but ONLY the value
-                        Arg::with_name("symbol")
-                            //.takes_value(true)
-                            .required(true)
-                            .help("Retrieves history of supplied [symbol]")
-                    )
-                    .arg(
-                        Arg::with_name("period_type")
-                            .long("ptype")
-                            .takes_value(true)
-                            .help("Defines period type: day, month, year, ytd")
-                    )
-                    .arg(
-                        Arg::with_name("period")
-                            .long("period")
-                            .takes_value(true)
-                            .help("Defines number of periods to show; day: 1,2,3,4,5,10* | month: 1*,2,3,6 | year: 1*,2,3,5,10,15,20 | ytd: 1*")
-                    )
-                    .arg(
-                        Arg::with_name("freq_type")
-                            .long("ftype")
-                            .takes_value(true)
-                            .help("Defines freq of new candle by period_type: day: minute* | month: daily, weekly* | year: daily, weekly, monthly* | ytd: daily, weekly*")
-                    )
-                    .arg(
-                        Arg::with_name("freq")
-                            .long("freq")
-                            .takes_value(true)
-                            .help("Defines number of freq_types to show: minute: 1*,5,10,15,30 | daily: 1* | weekly: 1* | monthly: 1*")
-                    )
-                    .arg(
-                        Arg::with_name("startdate")
-                            .takes_value(true)
-                            .help("Defines start date <yyyy-mm-dd>. <period> should not be provided")
-                    )
-                    .arg(
-                        Arg::with_name("enddate")
-                            .takes_value(true)
-                            .help("Defines end date <yyyy-mm-dd>. Default is previous trading day.")
-                    )
-                )
-            .subcommand(
-                SubCommand::with_name("optionchain")
-                    .about("Retrieve history for one <symbol>")
-                    .arg(
-                        Arg::with_name("symbol")
-                            .takes_value(true)
-                            .help("Retrieves Option Chain of supplied <symbol>")
-                    )
-            )
-            .after_help("A valid token must be set in env variable: TDAUTHTOKEN")
-            .get_matches();
-
+    let matches = cli_matches();
+        
     let c = TDAClient::new(env::var("TDAUTHTOKEN").unwrap());
 
     match matches.subcommand() {
@@ -161,13 +91,3 @@ fn main() {
     }
 }
 
-
-// or implement with FROM trait and chrono - do i need a datetime struct?
-
-fn epochtodatetime(epoch: u64) -> String {
-    unimplemented!();
-}
-
-fn datetimetoepoch(dt: String) -> u64 {
-    unimplemented!();
-}
