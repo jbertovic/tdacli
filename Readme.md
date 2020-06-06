@@ -25,3 +25,9 @@ an example usage piped into jq running on linux
   "askPrice": 72.88
 }
 ```
+
+# TODO
+
+- [ ] finish off History and OptionChain subcommands
+- [ ] add option for date calculations on History epoch data stamps
+- [ ] once orders are complete on tdameritrade::TDAClient than to new subcommand
