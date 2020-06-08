@@ -1,6 +1,6 @@
 ## TDACLI
 
-This is just a very simple CLI wrapper around my tdameritradeclient library.
+A simple CLI wrapper around my tdameritradeclient library.
 
 an example usage piped into jq running on linux
 
@@ -30,4 +30,5 @@ an example usage piped into jq running on linux
 
 - [ ] finish off History and OptionChain subcommands
 - [ ] add option for date calculations on History epoch data stamps
+- [ ] Consider adding date conversion using chrono package
 - [ ] once orders are complete on [TDAClient](https://github.com/jbertovic/tdameritradeclient) than to new subcommand

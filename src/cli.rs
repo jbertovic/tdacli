@@ -35,7 +35,7 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
         .subcommand(
             SubCommand::with_name("history")
                 .about("Retrieve history for one <symbol>. \r\n'*' indicates default value in argument values.")
-                .arg( //TODO: symbol shouldn't be an argument with value but ONLY the value
+                .arg( // symbol shouldn't be an argument with value but ONLY the value
                     Arg::with_name("symbol")
                         //.takes_value(true)
                         .required(true)
@@ -68,23 +68,86 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 .arg(
                     Arg::with_name("startdate")
                         .takes_value(true)
-                        .help("Defines start date <yyyy-mm-dd>. <period> should not be provided")
+                        .help("Defines start date in epoch format. <period> should not be provided")
                 )
                 .arg(
                     Arg::with_name("enddate")
                         .takes_value(true)
-                        .help("Defines end date <yyyy-mm-dd>. Default is previous trading day.")
+                        .help("Defines end date epoch format. Default is previous trading day.")
                 )
             )
         .subcommand(
             SubCommand::with_name("optionchain")
-                .about("Retrieve history for one <symbol>")
-                .arg(
+                .about("Retrieve option chain for one <symbol>")
+                .arg( // symbol shouldn't be an argument with value but ONLY the value
                     Arg::with_name("symbol")
-                        .takes_value(true)
-                        .help("Retrieves Option Chain of supplied <symbol>")
+                        //.takes_value(true)
+                        .required(true)
+                        .help("Retrieves history of supplied [symbol]")
                 )
-        )
+                .arg(
+                    Arg::with_name("contract_type")
+                        .long("ctype")
+                        .takes_value(true)
+                        .help("Type of contract to return in chain. <CALL, PUT or ALL (default)>")
+                )
+                .arg(
+                    Arg::with_name("strike_count")
+                        .long("xcount")
+                        .takes_value(true)
+                        .help("Number of strikes to return above and below at-the-money price")
+                )
+                .arg(
+                    Arg::with_name("quotes")
+                        .short("q")
+                        .help("Include quotes for options in the option chain")
+                )
+                .arg(
+                    Arg::with_name("strategy")
+                        .long("strategy")
+                        .takes_value(true)
+                        .help("Returns strategy chain. Values: <SINGLE (default), COVERED, VERTICAL, CALENDAR, STRANGLE, STRADDLE, \
+                                BUTTERFLY, CONDOR, DIAGONAL, COLLAR, or ROLL>")
+                )
+                .arg(
+                    Arg::with_name("interval")
+                        .takes_value(true)
+                        .help("Strike interval for spread strategy chains")
+                )
+                .arg(
+                    Arg::with_name("strike")
+                        .short("x")
+                        .takes_value(true)
+                        .help("Return options only at that strike price")
+                )
+                .arg(
+                    Arg::with_name("range")
+                        .takes_value(true)
+                        .help("Specify range: <ALL (default), ITM, NTM, OTM, SAK, SBK, or SNK>")
+                )
+                .arg(
+                    Arg::with_name("from")
+                        .takes_value(true)
+                        .help("Specify from date 'yyyy-MM-dd' or 'yyyy-mm-dd'T'HH:mm:ssz'")
+                )
+                .arg(
+                    Arg::with_name("to")
+                        .takes_value(true)
+                        .help("Specify to date 'yyyy-MM-dd' or 'yyyy-mm-dd'T'HH:mm:ssz'")
+                )
+                .arg(
+                    Arg::with_name("exp_month")
+                        .long("expm")
+                        .takes_value(true)
+                        .help("Return only options expiring in given month <JAN, FEB..>. Default is ALL.")
+                )
+                .arg(
+                    Arg::with_name("option_type")
+                        .long("otype")
+                        .takes_value(true)
+                        .help("Standard or Non-standard contracts: <S, NS, ALL (default)>")
+                )
+            )
         .after_help("A valid token must be set in env variable: TDAUTHTOKEN")
         .get_matches()
 }

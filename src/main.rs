@@ -26,8 +26,6 @@ pub mod quote;
 use std::env;
 use tdameritradeclient::TDAClient;
 
-// TODO: Refactor subcommands to separate files
-
 fn main() {
     let matches = cli::cli_matches();
         
