@@ -1,8 +1,12 @@
 ## TDACLI
 
-A simple CLI wrapper around my tdameritradeclient library.
+A simple CLI wrapper around my tdameritradeclient library.  You will need to set the token in a environment variable so the CLI can get the valid token.  Store the token in `TDAUTHTOKEN`.  You can go on [developer.tdameritrade.com](http://developer.tdameritrade.com) to see how to manually create a valid token.
+
+
+## Example
 
 an example usage piped into jq running on linux
+
 
 ```
 > tdacli quote SPY,INTC,VNQ | jq '.[] | {symbol, mark, bidPrice, askPrice}'
