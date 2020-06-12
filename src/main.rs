@@ -36,10 +36,7 @@ fn main() {
         ("account", Some(sub_m)) => account::account(&c, &sub_m),
         ("quote", Some(sub_m)) => quote::quote(&c, sub_m),
         ("history", Some(sub_m)) => quote::history(&c, sub_m),
-        ("optionchain", Some(sub_m)) => match sub_m.value_of("symbol") {
-            Some(symbol) => println!("Not Yet Implemented: Symbol {}", symbol),
-            None => println!("Missing symbol"),
-        },
+        ("optionchain", Some(sub_m)) => quote::optionchain(&c, sub_m),
         _ => {}
     }
 }

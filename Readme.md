@@ -36,6 +36,7 @@ an example usage piped into jq running on linux
 
 ### TODO
 
+- [ ] Review how args are entered - Not sure subcommand `[ARGS]` are being grabbed properly
 - [ ] finish off History and OptionChain subcommands
 - [ ] add option for date calculations on History epoch data stamps
 - [ ] Consider adding date conversion using chrono package

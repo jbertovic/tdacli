@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use tdameritradeclient::{TDAClient, History};
+use tdameritradeclient::{TDAClient, History, OptionChain};
 
 /// Grabs the quote for symbols supplied xxx,yyy,zzz
 /// calls `tdameritradeclient::getquote(symbols)
@@ -48,6 +48,57 @@ pub fn history(c: &TDAClient, args: &ArgMatches) {
         None => missing_symbol(),
     }
 }
+
+/// Grabs the quote history for a symbol using param defining the query
+/// calls `tdameritradeclient::getoptionchain(symbol, Option param)
+pub fn optionchain(c: &TDAClient, args: &ArgMatches) {
+    match args.value_of("symbol") {
+        Some(symbol) => {
+            let mut param: Vec<OptionChain> = Vec::new();
+            // determine query parameters
+            if args.is_present("ctype") {
+                param.push(OptionChain::ContractType(args.value_of("ctype").unwrap()));
+            }
+            if args.is_present("xcount") {
+                param.push(OptionChain::StrikeCount(args.value_of("xcount").unwrap()
+                    .parse().expect("strike count should be a positive integer")));
+            }
+            if args.is_present("q") {
+                param.push(OptionChain::IncludeQuotes(true));
+            }
+            if args.is_present("strategy") {
+                param.push(OptionChain::Strategy(args.value_of("strategy").unwrap()));
+            }
+            if args.is_present("interval") {
+                param.push(OptionChain::Interval(args.value_of("interval").unwrap()
+                    .parse().expect("strike interval should be a number")));
+            }
+            if args.is_present("x") {
+                param.push(OptionChain::Strike(args.value_of("x").unwrap()
+                    .parse().expect("specified strike price should be a number")));
+            }
+            if args.is_present("range") {
+                param.push(OptionChain::Range(args.value_of("range").unwrap()));
+            }
+            if args.is_present("from") {
+                param.push(OptionChain::FromDate(args.value_of("from").unwrap()));
+            }
+            if args.is_present("to") {
+                param.push(OptionChain::ToDate(args.value_of("to").unwrap()));
+            }
+            if args.is_present("expm") {
+                param.push(OptionChain::ExpireMonth(args.value_of("expm").unwrap()));
+            }
+            if args.is_present("otype") {
+                param.push(OptionChain::OptionType(args.value_of("otype").unwrap()));
+            }
+            let response: String = c.getoptionchain(&symbol, &param);
+            println!("{}", response)
+        }
+        None => missing_symbol(),
+    }
+}
+
 
 
 fn missing_symbol() {

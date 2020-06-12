@@ -1,10 +1,11 @@
-use clap::{App, Arg, SubCommand, ArgMatches};
+use clap::{App, Arg, SubCommand, ArgMatches, AppSettings};
 
 pub fn cli_matches<'a>() -> ArgMatches<'a> {
     App::new("TDAmeritrade API CLI")
         .version(crate_version!())
+        .setting(AppSettings::VersionlessSubcommands)
         .about("CLI Interface into tdameritradeclient rust library")
-        .subcommand(SubCommand::with_name("userprincipals").about("Fetches User Principals"))
+        .subcommand(SubCommand::with_name("userprincipals").about("Retrieves User Principals"))
         .subcommand(
             SubCommand::with_name("account")
                 .about("Retrieve account information for <account_id>")
@@ -34,7 +35,7 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
         )
         .subcommand(
             SubCommand::with_name("history")
-                .about("Retrieve history for one <symbol>. \r\n'*' indicates default value in argument values.")
+                .about("Retrieve history for one <symbol>.")
                 .arg( // symbol shouldn't be an argument with value but ONLY the value
                     Arg::with_name("symbol")
                         //.takes_value(true)
@@ -100,7 +101,7 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 .arg(
                     Arg::with_name("quotes")
                         .short("q")
-                        .help("Include quotes for options in the option chain")
+                        .help("Include quotes for options in the option chain. Default is NOT included")
                 )
                 .arg(
                     Arg::with_name("strategy")
@@ -112,13 +113,13 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 .arg(
                     Arg::with_name("interval")
                         .takes_value(true)
-                        .help("Strike interval for spread strategy chains")
+                        .help("Strike interval for spread strategy chains. To used with <strategy> argument.")
                 )
                 .arg(
                     Arg::with_name("strike")
                         .short("x")
                         .takes_value(true)
-                        .help("Return options only at that strike price")
+                        .help("Return options only at specified strike price")
                 )
                 .arg(
                     Arg::with_name("range")
@@ -148,6 +149,6 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                         .help("Standard or Non-standard contracts: <S, NS, ALL (default)>")
                 )
             )
-        .after_help("A valid token must be set in env variable: TDAUTHTOKEN")
+        .after_help("A valid token must be set in env variable: TDAUTHTOKEN.\r\n'*' indicates default value in subcommand help information.")
         .get_matches()
 }
