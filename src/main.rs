@@ -29,7 +29,8 @@ use tdameritradeclient::TDAClient;
 fn main() {
     let matches = cli::cli_matches();
         
-    let c = TDAClient::new(env::var("TDAUTHTOKEN").unwrap());
+    let c = TDAClient::new(env::var("TDAUTHTOKEN")
+        .expect("Token is missing inside env variable TDAUTHTOKEN"));
 
     match matches.subcommand() {
         ("userprincipals", Some(_)) => account::userprincipals(&c),

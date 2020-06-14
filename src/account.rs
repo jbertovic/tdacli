@@ -28,6 +28,6 @@ pub fn account(c: &TDAClient, args: &ArgMatches) {
             }
             println!("{}", resp)
         }
-        None => println!("{{ \"error\": \"Missing account_id\"}}"),
+        None => println!("{{ \"error\": \"Missing account_id\" }}"),
     }
 }

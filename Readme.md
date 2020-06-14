@@ -34,10 +34,35 @@ an example usage piped into jq running on linux
 }
 ```
 
+## CLI commands
+
+```
+>tdacli --help
+TDAmeritrade API CLI 0.1.0
+Command Line Interface into tdameritradeclient rust library
+
+USAGE:
+    tdacli [SUBCOMMAND]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+SUBCOMMANDS:
+    account           Retrieve account information for <account_id>
+    help              Prints this message or the help of the given subcommand(s)
+    history           Retrieve history for one <symbol>.
+    optionchain       Retrieve option chain for one <symbol>
+    quote             Retrieve quotes for requested symbols
+    userprincipals    Retrieves User Principals
+
+A valid token must be set in env variable: TDAUTHTOKEN.
+'*' indicates default value in subcommand help information.
+```
+
+
 ### TODO
 
-- [ ] Review how args are entered - Not sure subcommand `[ARGS]` are being grabbed properly
-- [ ] finish off History and OptionChain subcommands
 - [ ] add option for date calculations on History epoch data stamps
 - [ ] Consider adding date conversion using chrono package
 - [ ] once orders are complete on [TDAClient](https://github.com/jbertovic/tdameritradeclient) than to new subcommand

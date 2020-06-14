@@ -1,18 +1,18 @@
-use clap::{App, Arg, SubCommand, ArgMatches, AppSettings};
+use clap::{App, Arg, SubCommand, ArgMatches, AppSettings, ArgGroup};
 
 pub fn cli_matches<'a>() -> ArgMatches<'a> {
     App::new("TDAmeritrade API CLI")
         .version(crate_version!())
         .setting(AppSettings::VersionlessSubcommands)
-        .about("CLI Interface into tdameritradeclient rust library")
+        .about("Command Line Interface into tdameritradeclient rust library")
         .subcommand(SubCommand::with_name("userprincipals").about("Retrieves User Principals"))
         .subcommand(
             SubCommand::with_name("account")
                 .about("Retrieve account information for <account_id>")
                 .arg(
                     Arg::with_name("account_id")
-                        //.takes_value(true)
-                        //.index(1)
+                        .takes_value(true)
+                        .required(true)
                         .help("Retrieves account information for linked account_id")
                 )
                 .arg(
@@ -28,9 +28,10 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
         )
         .subcommand(
             SubCommand::with_name("quote")
-                .about("Retrieve quotes for [symbols]")
+                .about("Retrieve quotes for requested symbols")
                 .arg(Arg::with_name("symbols")
-                    .help("Retrieves quotes of supplied [symbols] in format \"sym1,sym2,sym3\""
+                    .required(true)
+                    .help("Retrieves quotes of supplied <symbols> in format \"sym1,sym2,sym3\""
                 ))
         )
         .subcommand(
@@ -40,7 +41,7 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                     Arg::with_name("symbol")
                         //.takes_value(true)
                         .required(true)
-                        .help("Retrieves history of supplied [symbol]")
+                        .help("Symbol of instrument.")
                 )
                 .arg(
                     Arg::with_name("period_type")
@@ -76,21 +77,30 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                         .takes_value(true)
                         .help("Defines end date epoch format. Default is previous trading day.")
                 )
+                .after_help("Think of the frequency as the size of a candle on the chart or how to divide the ticks. \n\
+                                and the period as the term or total length of the history. \n\
+                                '*' indicates default value.")
             )
         .subcommand(
             SubCommand::with_name("optionchain")
                 .about("Retrieve option chain for one <symbol>")
                 .arg( // symbol shouldn't be an argument with value but ONLY the value
                     Arg::with_name("symbol")
-                        //.takes_value(true)
                         .required(true)
-                        .help("Retrieves history of supplied [symbol]")
+                        .help("Symbol of underlying instrument.")
                 )
                 .arg(
-                    Arg::with_name("contract_type")
-                        .long("ctype")
-                        .takes_value(true)
-                        .help("Type of contract to return in chain. <CALL, PUT or ALL (default)>")
+                    Arg::with_name("call")
+                        .short("c")
+                        .help("Retrieve CALL contract types only.")
+                )
+                .arg(
+                    Arg::with_name("put")
+                        .short("p")
+                        .help("Retrieve PUT contract types only.")
+                )
+                .group(ArgGroup::with_name("contract_type")
+                    .args(&["call", "put"])
                 )
                 .arg(
                     Arg::with_name("strike_count")
@@ -101,30 +111,33 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 .arg(
                     Arg::with_name("quotes")
                         .short("q")
-                        .help("Include quotes for options in the option chain. Default is NOT included")
+                        .help("Include underlying instrument quote.")
                 )
                 .arg(
                     Arg::with_name("strategy")
                         .long("strategy")
                         .takes_value(true)
-                        .help("Returns strategy chain. Values: <SINGLE (default), COVERED, VERTICAL, CALENDAR, STRANGLE, STRADDLE, \
+                        .help("Returns strategy chain. Values: <SINGLE*, COVERED, VERTICAL, CALENDAR, STRANGLE, STRADDLE, \
                                 BUTTERFLY, CONDOR, DIAGONAL, COLLAR, or ROLL>")
                 )
                 .arg(
                     Arg::with_name("interval")
+                        .long("interval")
                         .takes_value(true)
                         .help("Strike interval for spread strategy chains. To used with <strategy> argument.")
                 )
                 .arg(
                     Arg::with_name("strike")
+                        .long("strike")
                         .short("x")
                         .takes_value(true)
                         .help("Return options only at specified strike price")
                 )
                 .arg(
                     Arg::with_name("range")
+                        .long("range")
                         .takes_value(true)
-                        .help("Specify range: <ALL (default), ITM, NTM, OTM, SAK, SBK, or SNK>")
+                        .help("Specify range: <ALL*, ITM, NTM, OTM, SAK, SBK, or SNK>")
                 )
                 .arg(
                     Arg::with_name("from")
@@ -139,15 +152,24 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 .arg(
                     Arg::with_name("exp_month")
                         .long("expm")
+                        .short("m")
                         .takes_value(true)
                         .help("Return only options expiring in given month <JAN, FEB..>. Default is ALL.")
                 )
                 .arg(
-                    Arg::with_name("option_type")
-                        .long("otype")
-                        .takes_value(true)
-                        .help("Standard or Non-standard contracts: <S, NS, ALL (default)>")
+                    Arg::with_name("typeS")
+                        .short("s")
+                        .help("Standard contracts only.")
                 )
+                .arg(
+                    Arg::with_name("typeNS")
+                        .short("n")
+                        .help("Non-Standard contracts only.")
+                )
+                .group(ArgGroup::with_name("option_type")
+                    .args(&["typeS", "typeNS"])
+                )
+                .after_help("'*' indicates default value.")
             )
         .after_help("A valid token must be set in env variable: TDAUTHTOKEN.\r\n'*' indicates default value in subcommand help information.")
         .get_matches()

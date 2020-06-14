@@ -56,14 +56,17 @@ pub fn optionchain(c: &TDAClient, args: &ArgMatches) {
         Some(symbol) => {
             let mut param: Vec<OptionChain> = Vec::new();
             // determine query parameters
-            if args.is_present("ctype") {
-                param.push(OptionChain::ContractType(args.value_of("ctype").unwrap()));
+            if args.is_present("call") {
+                param.push(OptionChain::ContractType("CALL"));
             }
-            if args.is_present("xcount") {
-                param.push(OptionChain::StrikeCount(args.value_of("xcount").unwrap()
+            if args.is_present("put") {
+                param.push(OptionChain::ContractType("PUT"));
+            }
+            if args.is_present("strike_count") {
+                param.push(OptionChain::StrikeCount(args.value_of("srike_count").unwrap()
                     .parse().expect("strike count should be a positive integer")));
             }
-            if args.is_present("q") {
+            if args.is_present("quotes") {
                 param.push(OptionChain::IncludeQuotes(true));
             }
             if args.is_present("strategy") {
@@ -73,8 +76,8 @@ pub fn optionchain(c: &TDAClient, args: &ArgMatches) {
                 param.push(OptionChain::Interval(args.value_of("interval").unwrap()
                     .parse().expect("strike interval should be a number")));
             }
-            if args.is_present("x") {
-                param.push(OptionChain::Strike(args.value_of("x").unwrap()
+            if args.is_present("strike") {
+                param.push(OptionChain::Strike(args.value_of("strike").unwrap()
                     .parse().expect("specified strike price should be a number")));
             }
             if args.is_present("range") {
@@ -86,11 +89,14 @@ pub fn optionchain(c: &TDAClient, args: &ArgMatches) {
             if args.is_present("to") {
                 param.push(OptionChain::ToDate(args.value_of("to").unwrap()));
             }
-            if args.is_present("expm") {
-                param.push(OptionChain::ExpireMonth(args.value_of("expm").unwrap()));
+            if args.is_present("exp_month") {
+                param.push(OptionChain::ExpireMonth(args.value_of("exp_month").unwrap()));
             }
-            if args.is_present("otype") {
-                param.push(OptionChain::OptionType(args.value_of("otype").unwrap()));
+            if args.is_present("typeS") {
+                param.push(OptionChain::OptionType("S"));
+            }
+            if args.is_present("typeNS") {
+                param.push(OptionChain::OptionType("NS"));
             }
             let response: String = c.getoptionchain(&symbol, &param);
             println!("{}", response)
