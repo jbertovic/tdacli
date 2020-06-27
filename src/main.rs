@@ -22,6 +22,7 @@ extern crate clap;
 pub mod cli;
 pub mod account;
 pub mod quote;
+pub mod auth;
 
 use std::env;
 use tdameritradeclient::TDAClient;
@@ -33,11 +34,15 @@ fn main() {
         .expect("Token is missing inside env variable TDAUTHTOKEN"));
 
     match matches.subcommand() {
+        ("weblink", Some(sub_m)) => auth::weblink(&sub_m),
         ("userprincipals", Some(_)) => account::userprincipals(&c),
         ("account", Some(sub_m)) => account::account(&c, &sub_m),
         ("quote", Some(sub_m)) => quote::quote(&c, sub_m),
         ("history", Some(sub_m)) => quote::history(&c, sub_m),
         ("optionchain", Some(sub_m)) => quote::optionchain(&c, sub_m),
+        ("auth", Some(sub_m)) => auth::auth(sub_m),
+        //NOT YET IMPLEMENTED
+        //order
         _ => {}
     }
 }

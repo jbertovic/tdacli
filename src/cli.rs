@@ -5,6 +5,49 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
         .version(crate_version!())
         .setting(AppSettings::VersionlessSubcommands)
         .about("Command Line Interface into tdameritradeclient rust library")
+        .arg(
+            Arg::with_name("refresh")
+            .short("r")
+            .help("Use env variable: TDREFRESHTOKEN as a refresh token.")
+        )
+        .arg(
+            Arg::with_name("printrefresh")
+            .short("p")
+            .help("Print current token")
+        )
+        .subcommand(
+            SubCommand::with_name("auth")
+            .arg(
+                Arg::with_name("clientid")
+                .takes_value(true)
+                .required(true)
+                .help("Also known as consumer key as registered at developer.tdameritrade.com")
+            )
+            .arg(
+                Arg::with_name("redirect")
+                .takes_value(true)
+                .required(true)
+                .help("Redirect URI as registered at developer.tdameritrade.com")
+            )
+            .about("Refresh token from refresh_token or authorization_code\r\n\
+            NOTE: code must be set in env variable: TDCODE")
+        )
+        .subcommand(
+            SubCommand::with_name("weblink")
+            .arg(
+                Arg::with_name("clientid")
+                .takes_value(true)
+                .required(true)
+                .help("Also known as consumer key as registered at developer.tdameritrade.com")
+            )
+            .arg(
+                Arg::with_name("redirect")
+                .takes_value(true)
+                .required(true)
+                .help("Redirect URI as registered at developer.tdameritrade.com")
+            )
+            .about("Gives you the url to get authorization code from TDAmeritrade")
+        )
         .subcommand(SubCommand::with_name("userprincipals").about("Retrieves User Principals"))
         .subcommand(
             SubCommand::with_name("account")
@@ -171,6 +214,8 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 )
                 .after_help("'*' indicates default value.")
             )
-        .after_help("A valid token must be set in env variable: TDAUTHTOKEN.\r\n'*' indicates default value in subcommand help information.")
+        .after_help("A valid token must be set in env variable: TDAUTHTOKEN.\r\n\
+            If '-r' flag is used than env variable: TDREFRESHTOKEN can be used instead.\r\n\
+            '*' indicates default value in subcommand help information.")
         .get_matches()
 }
