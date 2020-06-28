@@ -15,6 +15,16 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
             .short("p")
             .help("Print current token")
         )
+        .arg(
+            Arg::with_name("updaterefresh")
+            .short("u")
+            .help("Update refresh token. Only with '-r'")
+        )
+        .arg(
+            Arg::with_name("assignvar")
+            .short("a")
+            .help("Assign updated tokens to variables: TDAUTHTOKEN and TDREFRESHTOKEN. Only with '-r'")
+        )
         .subcommand(
             SubCommand::with_name("auth")
             .arg(
@@ -29,8 +39,8 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 .required(true)
                 .help("Redirect URI as registered at developer.tdameritrade.com")
             )
-            .about("Refresh token from refresh_token or authorization_code\r\n\
-            NOTE: code must be set in env variable: TDCODE")
+            .about("Valid token and refresh_token from authorization_code")
+            .after_help("NOTE: code must be set in env variable: TDCODE")
         )
         .subcommand(
             SubCommand::with_name("weblink")
