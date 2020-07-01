@@ -29,9 +29,16 @@ use tdameritradeclient::TDAClient;
 
 fn main() {
     let matches = cli::cli_matches();
-        
+    
+    //TODO: add refresh subcommand
+    //TODO: refresh: option only to print refresh or token but NOT both
+    //TODO: refresh: able to update either token or both tokens
+    //TODO: refresh: able to assign to env variables
+    //TODO: add orders subcommand
+    //TODO: orders: output filled, working, all
+
     let c = TDAClient::new(env::var("TDAUTHTOKEN")
-        .expect("Token is missing inside env variable TDAUTHTOKEN"));
+    .expect("Token is missing inside env variable TDAUTHTOKEN"));
 
     match matches.subcommand() {
         ("weblink", Some(sub_m)) => auth::weblink(&sub_m),
@@ -41,7 +48,7 @@ fn main() {
         ("history", Some(sub_m)) => quote::history(&c, sub_m),
         ("optionchain", Some(sub_m)) => quote::optionchain(&c, sub_m),
         ("auth", Some(sub_m)) => auth::auth(sub_m),
-        //NOT YET IMPLEMENTED
+        ("refresh", Some(sub_m)) => auth::refresh(sub_m),
         //order
         _ => {}
     }

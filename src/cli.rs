@@ -5,29 +5,48 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
         .version(crate_version!())
         .setting(AppSettings::VersionlessSubcommands)
         .about("Command Line Interface into tdameritradeclient rust library")
-        .arg(
-            Arg::with_name("refresh")
-            .short("r")
-            .help("Use env variable: TDREFRESHTOKEN as a refresh token.")
-        )
-        .arg(
-            Arg::with_name("printrefresh")
-            .short("p")
-            .help("Print current token")
-        )
-        .arg(
-            Arg::with_name("updaterefresh")
-            .short("u")
-            .help("Update refresh token. Only with '-r'")
-        )
-        .arg(
-            Arg::with_name("assignvar")
-            .short("a")
-            .help("Assign updated tokens to variables: TDAUTHTOKEN and TDREFRESHTOKEN. Only with '-r'")
+        .subcommand(
+            SubCommand::with_name("refresh")
+            .about("Valid token or renew refresh_token using a refresh_token grant type")
+            .arg(
+                Arg::with_name("printrefresh")
+                .short("r")
+                .help("Print refresh token")
+            )
+            .arg(
+                Arg::with_name("printtoken")
+                .short("p")
+                .help("Print current token")
+            )
+            .arg(
+                Arg::with_name("updaterefresh")
+                .short("u")
+                .help("Update refresh_token.  Otherwise only token vill be updated.")
+            )
+            .arg(
+                Arg::with_name("assignvar")
+                .short("a")
+                .help("Assign updated tokens to env variables: TDAUTHTOKEN and TDREFRESHTOKEN.")
+            )
+            .arg(
+                Arg::with_name("clientid")
+                .takes_value(true)
+                .help("Also known as consumer key as registered at developer.tdameritrade.com")
+            )
         )
         .subcommand(
             SubCommand::with_name("auth")
             .arg(
+                Arg::with_name("decoded")
+                .short("d")
+                .help("Code is decoded and NOT url encoded. Do NOT use this if copied from browser window.")
+            )
+            .arg(
+                Arg::with_name("assignvar")
+                .short("a")
+                .help("Assign updated tokens to variables: TDAUTHTOKEN and TDREFRESHTOKEN")
+            )
+                .arg(
                 Arg::with_name("clientid")
                 .takes_value(true)
                 .required(true)
@@ -39,8 +58,8 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 .required(true)
                 .help("Redirect URI as registered at developer.tdameritrade.com")
             )
-            .about("Valid token and refresh_token from authorization_code")
-            .after_help("NOTE: code must be set in env variable: TDCODE")
+            .about("Valid token and refresh_token using authorization_code grant type")
+            .after_help("NOTE: code must be set in env variable: TDCODE. See 'weblink' subcommand to retrieve code.")
         )
         .subcommand(
             SubCommand::with_name("weblink")
@@ -225,7 +244,9 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 .after_help("'*' indicates default value.")
             )
         .after_help("A valid token must be set in env variable: TDAUTHTOKEN.\r\n\
-            If '-r' flag is used than env variable: TDREFRESHTOKEN can be used instead.\r\n\
+            Token can be retrieved using 'refresh' subcommand if you have a valid refresh_token.\r\n\
+            Token can also be issued by using 'weblink' subcommand first to retrieve 'authorization_code'\r\n\
+             and 'auth' subcommand to issue new token and refresh_token.\r\n\
             '*' indicates default value in subcommand help information.")
         .get_matches()
 }

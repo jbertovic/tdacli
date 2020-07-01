@@ -10,3 +10,8 @@ pub fn auth(args: &ArgMatches) {
     println!("{}", 
         getcodeweblink(args.value_of("clientid").unwrap(), args.value_of("redirect").unwrap()));
 }
+
+pub fn refresh(args: &ArgMatches) {
+    println!("{}", 
+        getcodeweblink(args.value_of("clientid").unwrap(), args.value_of("redirect").unwrap()));
+}
