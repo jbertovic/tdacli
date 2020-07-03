@@ -35,22 +35,43 @@ fn main() {
     //TODO: orders: add (need to determine how to specify order desc json)
     //TODO: orders: delete
 
-    // TODO: CHECK for proper token setup when running
-    // Either TDAUTHTOKEN exists or TDREFRESHTOKEN with subcommands `auth` and `refresh` or NOTHING with `weblink`
-    let c = TDAClient::new(env::var("TDAUTHTOKEN")
-    .expect("Token is missing inside env variable TDAUTHTOKEN"));
-
     match matches.subcommand() {
-        ("weblink", Some(sub_m)) => auth::weblink(&sub_m),
-        ("userprincipals", Some(_)) => account::userprincipals(&c),
-        ("account", Some(sub_m)) => account::account(&c, &sub_m),
-        ("quote", Some(sub_m)) => quote::quote(&c, sub_m),
-        ("history", Some(sub_m)) => quote::history(&c, sub_m),
-        ("optionchain", Some(sub_m)) => quote::optionchain(&c, sub_m),
-        ("auth", Some(sub_m)) => auth::auth(sub_m),
-        ("refresh", Some(sub_m)) => auth::refresh(sub_m),
-        //order
-        _ => {}
+        (cmd, Some(sub_m)) => {
+            match cmd {
+
+                // relies on NO Env Variables
+                "weblink" => auth::weblink(&sub_m),
+
+                // relies on env variable TDREFRESHTOKEN
+                "refresh" => {
+                    let refresh = env::var("TDREFRESHTOKEN")
+                        .expect("Token is missing inside env variable TDREFRESHTOKEN");
+                    auth::refresh(sub_m, refresh);
+                    }
+
+                // relies on env variable TDCODE
+                "auth" => {
+                    let code = env::var("TDCODE")
+                        .expect("Code is missing inside env variable TDCODE");
+                    auth::auth(sub_m, code);
+                    }
+
+                // relies on env variable TDAUTHTOKEN and tdameritradeclient::TDClient
+                _ => {
+                    let c = TDAClient::new(env::var("TDAUTHTOKEN")
+                        .expect("Token is missing inside env variable TDAUTHTOKEN"));
+                    match cmd {
+                        "userprincipals" => account::userprincipals(&c),
+                        "account" => account::account(&c, &sub_m),
+                        "quote" => quote::quote(&c, sub_m),
+                        "history" => quote::history(&c, sub_m),
+                        "optionchain" => quote::optionchain(&c, sub_m),
+                        _ => {},
+                    }
+                }
+            }
+        }
+        _ => {println!("Subcommand must be specified.  For more information try --help")}
     }
 }
 

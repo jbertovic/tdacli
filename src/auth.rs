@@ -1,6 +1,5 @@
 use clap::ArgMatches;
-use std::env;
-use tdameritradeclient::auth::{getcodeweblink, gettoken_fromrefresh, getrefresh_fromrefresh, gettoken_fromcode};
+use tdameritradeclient::auth::{getcodeweblink, gettoken_fromrefresh, getrefresh_fromrefresh, TDauth};
 
 /// Create a link to use to get an authorization_code from tdameritrade
 /// Code can be used to fetch a token and refresh token in the `auth` subcommand
@@ -9,14 +8,15 @@ pub fn weblink(args: &ArgMatches) {
         getcodeweblink(args.value_of("clientid").unwrap(), args.value_of("redirect").unwrap()));
 }
 /// Fetch updated `token` or `refresh_token` from a current `refresh_token`
-pub fn auth(args: &ArgMatches) {
-    let code = env::var("TDCODE").expect("Authorization CODE is missing inside env variable TDCODE");
+pub fn auth(args: &ArgMatches, code: String) {
     match args.value_of("clientid") {
         Some(clientid) => {
             match args.value_of("redirect") {
                 Some(redirect) => {
                     let decoded = !args.is_present("decoded");
-                    println!("{}", gettoken_fromcode(&code, clientid, redirect, decoded));
+                    let tdauth = TDauth::new_fromcode(&code, clientid, redirect, decoded);
+                    let (t, r) = tdauth.gettokens();
+                    println!("{{\"Token\": \"{}\", \"Refresh\": \"{}\"}}", t, r)
                 },
                 None => println!("{{ \"error\": \"Missing redirect\"}}"),
             }
@@ -25,8 +25,7 @@ pub fn auth(args: &ArgMatches) {
     }
 }
 /// Fetch updated `token` or `refresh_token` from a current `refresh_token`
-pub fn refresh(args: &ArgMatches) {
-    let rtoken = env::var("TDREFRESHTOKEN").expect("Refresh_token is missing inside env variable TDREFRESHTOKEN");
+pub fn refresh(args: &ArgMatches, rtoken: String) {
     match args.value_of("clientid") {
         Some(clientid) => {
             // do i need to renew refresh or only token?
