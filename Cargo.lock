@@ -17,15 +17,17 @@ dependencies = [
 
 [[package]]
 name = "attohttpc"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d5db1932a9d70d5091139d6b0e04ec6a4d9f9184041c15d71a5ef954cb3c5312"
+checksum = "93610ce1c035e8a273fe56a19852e42798f3c019ca2726e52d2971197f116525"
 dependencies = [
  "flate2",
  "http",
  "log",
  "native-tls",
  "openssl",
+ "serde",
+ "serde_urlencoded",
  "url",
 ]
 
@@ -109,6 +111,12 @@ checksum = "ba125de2af0df55319f41944744ad91c71113bf74a4646efff39afe1f6842db1"
 dependencies = [
  "cfg-if",
 ]
+
+[[package]]
+name = "dtoa"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "134951f4028bdadb9b84baf4232681efbf277da25144b9b0ad65df75946c422b"
 
 [[package]]
 name = "flate2"
@@ -409,6 +417,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_urlencoded"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ec5d77e2d4c73717816afac02670d5c4f534ea95ed430442cad02e7a6e32c97"
+dependencies = [
+ "dtoa",
+ "itoa",
+ "serde",
+ "url",
+]
+
+[[package]]
 name = "smallvec"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -422,7 +442,7 @@ checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
 
 [[package]]
 name = "tdacli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "tdameritradeclient",
@@ -430,11 +450,12 @@ dependencies = [
 
 [[package]]
 name = "tdameritradeclient"
-version = "0.1.1"
-source = "git+https://github.com/jbertovic/tdameritradeclient.git?tag=v0.1.1#57d22748982485a4e0e917d63af36ace43485209"
+version = "0.2.1"
+source = "git+https://github.com/jbertovic/tdameritradeclient.git?tag=v0.2.1#c86666045979a510b4009d508bfc983f36057a9a"
 dependencies = [
  "attohttpc",
  "serde_json",
+ "url",
 ]
 
 [[package]]

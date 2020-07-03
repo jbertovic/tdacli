@@ -1,16 +1,18 @@
 ## TDACLI
 
-A simple CLI wrapper around my tdameritradeclient library.  You will need to set the token in an environment variable called `TDAUTHTOKEN`.  You can go on [developer.tdameritrade.com](http://developer.tdameritrade.com) to see how to manually create a valid token.
+A simple CLI wrapper around my tdameritradeclient library. For help enter `tdacli --help`.  This will give you access to help and further subcommands.
 
-For help enter `tdacli --help`.  This will give you access to help and further subcommands.
+Current subcommands are: quote, history, optionchain, userprincipals, account, auth, refresh, weblink. See below for description on output of `tdaci --help` in the CLI Commands section
 
-Current subcommands are: quote, history, optionchain, userprincipals, account.
-
+Environmental Variable Requirements:
+- `TDAUTHTOKEN` on subcommands: account, history, optionchain, quote, userprincipals
+- `TDREFRESHTOKEN` on subcommands: refresh
+- `TDCODE` on subcommand: auth
+- No Env Variable on subcommand: weblink
 
 ## Example
 
-an example usage piped into jq running on linux
-
+an example usage piped into jq running on linux.  Assumes `TDAUTHTOKEN` env variable holds valid token.
 
 ```
 > tdacli quote SPY,INTC,VNQ | jq '.[] | {symbol, mark, bidPrice, askPrice}'
@@ -34,11 +36,61 @@ an example usage piped into jq running on linux
 }
 ```
 
-## CLI commands
+## Authorization from scratch
+
+### 1) Fetch code using weblink
+Use the `weblink` subcommand along with registered app on developer.tdameritrade.com to get an authorization link. When you register an app you will have a `consumer_key` (referred through out as clientid) and a `redirect_uri`. I recommend using a redirecturi that is your localhost (`https://127.0.0.1:8080/`).  This way you can copy the returned code directly from the query bar in the browser.  The below Consumer Key is only an example.  
 
 ```
->tdacli --help
-TDAmeritrade API CLI 0.1.0
+> tdacli weblink J3ROAVSNNFTLC9RJE4BD2DO2WJABCDEF https://127.0.0.1:8080/
+https://auth.tdameritrade.com/auth?response_type=code&redirect_uri=https%3A%2F%2F127.0.0.1%3A8080%2F&client_id=J3ROAVSNNFTLC9RJE4BD2DO2WJ9JE4DG%40AMER.OAUTHAP
+
+```
+
+Visit this link and authorize your access directly with TDameritrade.  You will receive the code in the query bar.  Only copy the encoded string after `code=`.  Assign this to the environment variable `TDCODE`.
+
+
+
+### 2) Use code to retrieve token and refresh_token
+
+From step 1 above with `TDCODE` env variable assigned.
+
+```
+> tdacli auth J3ROAVSNNFTLC9RJE4BD2DO2WJABCDEF https://127.0.0.1:8080/
+{"Token": "UZfU1e9dhw9zdq26+vJa1tERNhfaa4lFXqgfzeVW+HOEdRKHSDvnq0lepMd.....long string truncated",
+"Refresh": "a1tERNhfaa4lFXqgfzeVW+HOEdRKHSDvnq0lepMdvJa1tERNhfa....long string truncated"}
+```
+
+Assign the Refresh token to TDREFRESHTOKEN and the Token to TDAUTHTOKEN.  You can go ahead and run any of the other subcommands with TDAUTHTOKEN set.
+
+A refresh token lasts for 90 days and can be used to get a valid token to access tdameritrade API.  The token is only valid for 30 min before expiring.  Reuse the same or new refresh token to renew.
+
+
+### 3) Use refresh to maintain an active token
+
+Assumes REFRESHTOKEN is set and valid.
+
+```
+> tdacli refresh J3ROAVSNNFTLC9RJE4BD2DO2WJABCDEF
+zdq26+vJaNhfaa4lFXqgfzeVW+HOEdRKHSDzdq26+vJa1tERNhfaa4lFXqgfzeVW+HOEdRKHSDzdq26+vJa1tERNhfaa4...long string truncated
+```
+
+Use the returned value to set TDAUTHTOKEN.
+
+In bash you can automate this with:
+```
+export TDAUTHTOKEN=$(tdacli refresh J3ROAVSNNFTLC9RJE4BD2DO2WJABCDEF)
+```
+
+Not sure how to do this in windows?  Please DM me if you know.
+
+## CLI Commands
+
+### Output of main help
+
+```
+> tdacli --help
+TDAmeritrade API CLI 0.2.0
 Command Line Interface into tdameritradeclient rust library
 
 USAGE:
@@ -50,14 +102,53 @@ FLAGS:
 
 SUBCOMMANDS:
     account           Retrieve account information for <account_id>
+    auth              Retrieves refresh_token using authorization_code grant type
     help              Prints this message or the help of the given subcommand(s)
     history           Retrieve history for one <symbol>.
     optionchain       Retrieve option chain for one <symbol>
     quote             Retrieve quotes for requested symbols
+    refresh           Fetch valid token or renew refresh_token using a refresh_token grant type
     userprincipals    Retrieves User Principals
+    weblink           Gives you the url to get authorization code from TDAmeritrade
 
-A valid token must be set in env variable: TDAUTHTOKEN.
+Check env variable requirements for each subcommand.
+Token can be retrieved using 'refresh' subcommand if you have a valid refresh_token.
+Token can also be issued by using 'weblink' subcommand first to retrieve 'authorization_code'
+and 'auth' subcommand to issue new token and refresh_token.
 '*' indicates default value in subcommand help information.
+```
+
+### history help
+Included one help output of subcommand as an example.  All subcommands have `--help` option to help understand usage.
+
+```
+> tdacli history --help
+tdacli-history
+Retrieve history for one <symbol>.
+
+USAGE:
+    tdacli history [OPTIONS] <symbol> [ARGS]
+
+FLAGS:
+    -h, --help    Prints help information
+
+OPTIONS:
+        --freq <freq>            Defines number of freq_types to show: minute: 1*,5,10,15,30 | daily: 1* | weekly: 1* |
+                                 monthly: 1*
+        --ftype <freq_type>      Defines freq of new candle by period_type: day: minute* | month: daily, weekly* | year:
+                                 daily, weekly, monthly* | ytd: daily, weekly*
+        --period <period>        Defines number of periods to show; day: 1,2,3,4,5,10* | month: 1*,2,3,6 | year:
+                                 1*,2,3,5,10,15,20 | ytd: 1*
+        --ptype <period_type>    Defines period type: day, month, year, ytd
+
+ARGS:
+    <symbol>       Symbol of instrument.
+    <startdate>    Defines start date in epoch format. <period> should not be provided
+    <enddate>      Defines end date epoch format. Default is previous trading day.
+
+Think of the frequency as the size of a candle on the chart or how to divide the ticks.
+and the period as the term or total length of the history.
+'*' indicates default value.
 ```
 
 
@@ -65,4 +156,5 @@ A valid token must be set in env variable: TDAUTHTOKEN.
 
 - [ ] add option for date calculations on History epoch data stamps
 - [ ] Consider adding date conversion using chrono package
-- [ ] once orders are complete on [TDAClient](https://github.com/jbertovic/tdameritradeclient) than to new subcommand
+- [ ] orders - adding, deleting, listing
+- [ ] potential to integrate a json query language on output
