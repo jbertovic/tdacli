@@ -65,4 +65,4 @@ A valid token must be set in env variable: TDAUTHTOKEN.
 
 - [ ] add option for date calculations on History epoch data stamps
 - [ ] Consider adding date conversion using chrono package
-- [ ] once orders are complete on [TDAClient](https://github.com/jbertovic/tdameritradeclient) than to new subcommand
+- [ ] orders - adding, deleting, listing

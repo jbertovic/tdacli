@@ -450,8 +450,8 @@ dependencies = [
 
 [[package]]
 name = "tdameritradeclient"
-version = "0.2.0"
-source = "git+https://github.com/jbertovic/tdameritradeclient.git?tag=v0.2.0#17ab1aa074ad840fdb0c5497ca50b2ea965df00e"
+version = "0.2.1"
+source = "git+https://github.com/jbertovic/tdameritradeclient.git?tag=v0.2.1#c86666045979a510b4009d508bfc983f36057a9a"
 dependencies = [
  "attohttpc",
  "serde_json",

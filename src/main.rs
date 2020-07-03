@@ -30,13 +30,13 @@ use tdameritradeclient::TDAClient;
 fn main() {
     let matches = cli::cli_matches();
     
-    //TODO: add refresh subcommand
-    //TODO: refresh: option only to print refresh or token but NOT both
-    //TODO: refresh: able to update either token or both tokens
-    //TODO: refresh: able to assign to env variables
     //TODO: add orders subcommand
     //TODO: orders: output filled, working, all
+    //TODO: orders: add (need to determine how to specify order desc json)
+    //TODO: orders: delete
 
+    // TODO: CHECK for proper token setup when running
+    // Either TDAUTHTOKEN exists or TDREFRESHTOKEN with subcommands `auth` and `refresh` or NOTHING with `weblink`
     let c = TDAClient::new(env::var("TDAUTHTOKEN")
     .expect("Token is missing inside env variable TDAUTHTOKEN"));
 

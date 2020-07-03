@@ -7,32 +7,18 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
         .about("Command Line Interface into tdameritradeclient rust library")
         .subcommand(
             SubCommand::with_name("refresh")
-            .about("Valid token or renew refresh_token using a refresh_token grant type")
-            .arg(
-                Arg::with_name("printrefresh")
-                .short("r")
-                .help("Print refresh token")
-            )
-            .arg(
-                Arg::with_name("printtoken")
-                .short("p")
-                .help("Print current token")
-            )
+            .about("Fetch valid token or renew refresh_token using a refresh_token grant type")
             .arg(
                 Arg::with_name("updaterefresh")
                 .short("u")
                 .help("Update refresh_token.  Otherwise only token vill be updated.")
             )
             .arg(
-                Arg::with_name("assignvar")
-                .short("a")
-                .help("Assign updated tokens to env variables: TDAUTHTOKEN and TDREFRESHTOKEN.")
-            )
-            .arg(
                 Arg::with_name("clientid")
                 .takes_value(true)
                 .help("Also known as consumer key as registered at developer.tdameritrade.com")
             )
+            .after_help("NOTE: refresh_token must be set in env variable: TDREFRESHTOKEN.")
         )
         .subcommand(
             SubCommand::with_name("auth")
@@ -40,11 +26,6 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 Arg::with_name("decoded")
                 .short("d")
                 .help("Code is decoded and NOT url encoded. Do NOT use this if copied from browser window.")
-            )
-            .arg(
-                Arg::with_name("assignvar")
-                .short("a")
-                .help("Assign updated tokens to variables: TDAUTHTOKEN and TDREFRESHTOKEN")
             )
                 .arg(
                 Arg::with_name("clientid")
