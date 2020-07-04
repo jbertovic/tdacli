@@ -30,7 +30,7 @@ pub fn refresh(args: &ArgMatches, rtoken: String) {
         Some(clientid) => {
             // do i need to renew refresh or only token?
             // need to update tdameritradeclient to include getrefresh_fromrefresh()
-            let token = if args.is_present("updaterefresh") {
+            let token = if !args.is_present("updaterefresh") {
                 gettoken_fromrefresh(&rtoken, clientid)
             } else {
                 getrefresh_fromrefresh(&rtoken, clientid)
