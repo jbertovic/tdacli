@@ -43,7 +43,7 @@ Use the `weblink` subcommand along with registered app on developer.tdameritrade
 
 ```
 > tdacli weblink J3ROAVSNNFTLC9RJE4BD2DO2WJABCDEF https://127.0.0.1:8080/
-https://auth.tdameritrade.com/auth?response_type=code&redirect_uri=https%3A%2F%2F127.0.0.1%3A8080%2F&client_id=J3ROAVSNNFTLC9RJE4BD2DO2WJ9JE4DG%40AMER.OAUTHAP
+https://auth.tdameritrade.com/auth?response_type=code&redirect_uri=https%3A%2F%2F127.0.0.1%3A8080%2F&client_id=J3ROAVSNNFTLC9RJE4BD2DO2WJABCDEF%40AMER.OAUTHAP
 
 ```
 
