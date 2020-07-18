@@ -7,7 +7,7 @@ pub fn weblink(args: &ArgMatches) {
     println!("{}", 
         getcodeweblink(args.value_of("clientid").unwrap(), args.value_of("redirect").unwrap()));
 }
-/// Fetch updated `token` or `refresh_token` from a current `refresh_token`
+/// Fetch updated `refresh_token` from a current `refresh_token`
 pub fn auth(args: &ArgMatches, code: String) {
     match args.value_of("clientid") {
         Some(clientid) => {
@@ -15,8 +15,8 @@ pub fn auth(args: &ArgMatches, code: String) {
                 Some(redirect) => {
                     let decoded = !args.is_present("decoded");
                     let tdauth = TDauth::new_fromcode(&code, clientid, redirect, decoded);
-                    let (t, r) = tdauth.gettokens();
-                    println!("{{\"Token\": \"{}\", \"Refresh\": \"{}\"}}", t, r)
+                    let (_t, refresh) = tdauth.gettokens();
+                    println!("{}", refresh);
                 },
                 None => println!("{{ \"error\": \"Missing redirect\"}}"),
             }
