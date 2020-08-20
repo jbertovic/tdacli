@@ -82,7 +82,7 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                         .help("includes account orders")
                 )
                 .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN.")
-            )
+        )
         .subcommand(
             SubCommand::with_name("quote")
                 .about("Retrieve quotes for requested symbols")
@@ -91,7 +91,17 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                     .help("Retrieves quotes of supplied <symbols> in format \"sym1,sym2,sym3\""
                 ))
                 .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN.")
-            )
+        )
+        .subcommand(
+            SubCommand::with_name("transaction")
+                .about("Retrieve transaction history")
+                .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN.")
+        )
+        .subcommand(
+            SubCommand::with_name("instrument")
+                .about("Retrieve instrument information or search for instrument")
+                .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN.")
+        )
         .subcommand(
             SubCommand::with_name("history")
                 .about("Retrieve history for one <symbol>.")

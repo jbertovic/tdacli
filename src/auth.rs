@@ -1,25 +1,30 @@
 use clap::ArgMatches;
-use tdameritradeclient::auth::{getcodeweblink, gettoken_fromrefresh, getrefresh_fromrefresh, TDauth};
+use tdameritradeclient::auth::{
+    getcodeweblink, getrefresh_fromrefresh, gettoken_fromrefresh, TDauth,
+};
 
 /// Create a link to use to get an authorization_code from tdameritrade
 /// Code can be used to fetch a token and refresh token in the `auth` subcommand
 pub fn weblink(args: &ArgMatches) {
-    println!("{}", 
-        getcodeweblink(args.value_of("clientid").unwrap(), args.value_of("redirect").unwrap()));
+    println!(
+        "{}",
+        getcodeweblink(
+            args.value_of("clientid").unwrap(),
+            args.value_of("redirect").unwrap()
+        )
+    );
 }
-/// Fetch updated `refresh_token` from a current `refresh_token`
+/// Fetch updated `refresh_token` from a current `authorization_code` as retrieved from `weblink`
 pub fn auth(args: &ArgMatches, code: String) {
     match args.value_of("clientid") {
-        Some(clientid) => {
-            match args.value_of("redirect") {
-                Some(redirect) => {
-                    let decoded = !args.is_present("decoded");
-                    let tdauth = TDauth::new_fromcode(&code, clientid, redirect, decoded);
-                    let (_t, refresh) = tdauth.gettokens();
-                    println!("{}", refresh);
-                },
-                None => println!("{{ \"error\": \"Missing redirect\"}}"),
+        Some(clientid) => match args.value_of("redirect") {
+            Some(redirect) => {
+                let decoded = !args.is_present("decoded");
+                let tdauth = TDauth::new_fromcode(&code, clientid, redirect, decoded);
+                let (_t, refresh) = tdauth.gettokens();
+                println!("{}", refresh);
             }
+            None => println!("{{ \"error\": \"Missing redirect\"}}"),
         },
         None => println!("{{ \"error\": \"Missing clientid\"}}"),
     }

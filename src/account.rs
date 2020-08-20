@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use tdameritradeclient::{TDAClient, Account};
+use tdameritradeclient::{Account, TDAClient};
 
 /// Grabs the userprincipals data from tdameritrade
 /// calls `tdameritradeclient::getuserprincipals()`
@@ -14,16 +14,13 @@ pub fn account(c: &TDAClient, args: &ArgMatches) {
     match args.value_of("account_id") {
         Some(account) => {
             let resp: String;
-            if args.is_present("positions")&&args.is_present("orders") {
+            if args.is_present("positions") && args.is_present("orders") {
                 resp = c.getaccount(&account, &[Account::PositionsAndOrders]);
-            }
-            else if args.is_present("positions") {
+            } else if args.is_present("positions") {
                 resp = c.getaccount(&account, &[Account::Positions]);
-            }
-            else if args.is_present("orders") {
+            } else if args.is_present("orders") {
                 resp = c.getaccount(&account, &[Account::Orders]);
-            }
-            else {
+            } else {
                 resp = c.getaccount(&account, &[]);
             }
             println!("{}", resp)

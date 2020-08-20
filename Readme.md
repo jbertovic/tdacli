@@ -157,4 +157,3 @@ and the period as the term or total length of the history.
 - [ ] add option for date calculations on History epoch data stamps
 - [ ] Consider adding date conversion using chrono package
 - [ ] orders - adding, deleting, listing
-- [ ] potential to integrate a json query language on output
