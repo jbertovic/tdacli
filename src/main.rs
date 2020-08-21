@@ -65,6 +65,8 @@ fn main() {
                         "userprincipals" => account::userprincipals(&c),
                         "account" => account::account(&c, &sub_m),
                         "quote" => quote::quote(&c, sub_m),
+                        "transaction" => account::transaction(&c, sub_m),
+                        "instrument" => quote::instrument(&c, sub_m),
                         "history" => quote::history(&c, sub_m),
                         "optionchain" => quote::optionchain(&c, sub_m),
                         _ => {}

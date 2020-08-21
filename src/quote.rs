@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use tdameritradeclient::{History, OptionChain, TDAClient};
+use tdameritradeclient::{History, Instruments, OptionChain, TDAClient};
 
 /// Grabs the quote for symbols supplied xxx,yyy,zzz
 /// calls `tdameritradeclient::getquote(symbols)
@@ -7,6 +7,24 @@ pub fn quote(c: &TDAClient, args: &ArgMatches) {
     match args.value_of("symbols") {
         Some(symbols) => {
             let resp: String = c.getquotes(&symbols);
+            println!("{}", resp)
+        }
+        None => missing_symbol(),
+    }
+}
+/// Grabs the instrument information or search
+/// calls `tdameritradeclient::getinstruments(Instrument param)
+pub fn instrument(c: &TDAClient, args: &ArgMatches) {
+    match args.value_of("search") {
+        Some(search) => {
+            let mut param: Vec<Instruments> = Vec::new();
+            param.push(Instruments::Symbol(search));
+            if args.is_present("stype") {
+                param.push(Instruments::SearchType(
+                    args.value_of("stype").unwrap(),
+                ));
+            }
+            let resp: String = c.getinstruments(&param);
             println!("{}", resp)
         }
         None => missing_symbol(),
@@ -137,5 +155,5 @@ pub fn optionchain(c: &TDAClient, args: &ArgMatches) {
 }
 
 fn missing_symbol() {
-    println!("{{ \"error\": \"Missing symbols\"}}");
+    println!("{{ \"error\": \"Missing symbol\"}}");
 }

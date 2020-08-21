@@ -100,7 +100,30 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
         .subcommand(
             SubCommand::with_name("instrument")
                 .about("Retrieve instrument information or search for instrument")
-                .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN.")
+                .arg( // symbol shouldn't be an argument with value but ONLY the value
+                    Arg::with_name("search")
+                        .takes_value(true)
+                        .required(true)
+                        .help("Symbol of instrument or search parameter")
+                )
+                .arg( // symbol shouldn't be an argument with value but ONLY the value
+                    Arg::with_name("search_type")
+                        .long("stype")
+                        .takes_value(true)
+                        .help("Specifies type of request")
+                )
+                .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN. \n\r\n\r\
+                Type of Request \n\r\
+                - symbol-search: Retrieve instrument data of a specific symbol or cusip \n\r\
+                - symbol-regex: Retrieve instrument data for all symbols matching regex. \n\r\
+                Example: symbol=XYZ.* will return all symbols beginning with XYZ \n\r\
+                - desc-search: Retrieve instrument data for instruments whose description \n\r\
+                contains the word supplied. Example: symbol=FakeCompany will return \n\r\
+                all instruments with FakeCompany in the description. \n\r\
+                - desc-regex: Search description with full regex support. \n\r\
+                Example: symbol=XYZ.[A-C] returns all instruments whose descriptions \n\r\
+                contain a word beginning with XYZ followed by a character A through C. \n\r\
+                - fundamental: Returns fundamental data for a single instrument specified by exact symbol.")
         )
         .subcommand(
             SubCommand::with_name("history")
