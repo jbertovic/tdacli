@@ -95,20 +95,50 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
         .subcommand(
             SubCommand::with_name("transaction")
                 .about("Retrieve transaction history")
-                .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN.")
+                .arg( // symbol shouldn't be an argument with value but ONLY the value
+                    Arg::with_name("transaction_type")
+                        .long("type")
+                        .takes_value(true)
+                        .help("Specify Transaction Type otherwise ALL (See below)")
+                )
+                .arg( // symbol shouldn't be an argument with value but ONLY the value
+                    Arg::with_name("trans_id")
+                        .help("(OPTIONAL) Grab one transaction by ID. Ignores all other options.")
+                )
+                .arg( // symbol shouldn't be an argument with value but ONLY the value
+                    Arg::with_name("symbol")
+                        .long("symbol")
+                        .takes_value(true)
+                        .help("Specify symbol, otherwise all symbols")
+                )
+                .arg( // symbol shouldn't be an argument with value but ONLY the value
+                    Arg::with_name("start_date")
+                        .long("sdate")
+                        .takes_value(true)
+                        .help("Start date in yyyy-mm-dd. Max range is 1 year")
+                )
+                .arg( // symbol shouldn't be an argument with value but ONLY the value
+                    Arg::with_name("end_date")
+                        .long("edate")
+                        .takes_value(true)
+                        .help("End date in yyyy-mm-dd. Max range is 1 year")
+                )
+                .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN. \n\n\r\
+                Transaction Types: ALL, TRADE, BUY_ONLY, SELL_ONLY, CASH_IN_OR_CASH_OUT, CHECKING, \n\
+                DIVIDEND, INTEREST, OTHER, ADVISOR_FEES")
         )
         .subcommand(
             SubCommand::with_name("instrument")
                 .about("Retrieve instrument information or search for instrument")
                 .arg( // symbol shouldn't be an argument with value but ONLY the value
                     Arg::with_name("search")
-                        .takes_value(true)
                         .required(true)
+                        .takes_value(true)
                         .help("Symbol of instrument or search parameter")
                 )
                 .arg( // symbol shouldn't be an argument with value but ONLY the value
                     Arg::with_name("search_type")
-                        .long("stype")
+                        .required(true)
                         .takes_value(true)
                         .help("Specifies type of request")
                 )
@@ -116,14 +146,15 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 Type of Request \n\r\
                 - symbol-search: Retrieve instrument data of a specific symbol or cusip \n\r\
                 - symbol-regex: Retrieve instrument data for all symbols matching regex. \n\r\
-                Example: symbol=XYZ.* will return all symbols beginning with XYZ \n\r\
+                Example: search = XYZ.* will return all symbols beginning with XYZ \n\r\
                 - desc-search: Retrieve instrument data for instruments whose description \n\r\
-                contains the word supplied. Example: symbol=FakeCompany will return \n\r\
+                contains the word supplied. Example: search = FakeCompany will return \n\r\
                 all instruments with FakeCompany in the description. \n\r\
                 - desc-regex: Search description with full regex support. \n\r\
-                Example: symbol=XYZ.[A-C] returns all instruments whose descriptions \n\r\
+                Example: search = XYZ.[A-C] returns all instruments whose descriptions \n\r\
                 contain a word beginning with XYZ followed by a character A through C. \n\r\
-                - fundamental: Returns fundamental data for a single instrument specified by exact symbol.")
+                - fundamental: Returns fundamental data for a single instrument specified by exact symbol.\n\r\
+                - cusip: use the supplied cusip to look up details of instrument.")
         )
         .subcommand(
             SubCommand::with_name("history")

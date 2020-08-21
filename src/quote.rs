@@ -14,18 +14,25 @@ pub fn quote(c: &TDAClient, args: &ArgMatches) {
 }
 /// Grabs the instrument information or search
 /// calls `tdameritradeclient::getinstruments(Instrument param)
+/// OR calls `tdameritradeclient::getinstrument(cusip)
 pub fn instrument(c: &TDAClient, args: &ArgMatches) {
     match args.value_of("search") {
         Some(search) => {
             let mut param: Vec<Instruments> = Vec::new();
             param.push(Instruments::Symbol(search));
-            if args.is_present("stype") {
+            // if cusip is supplied than use invoke tdameritradeclient::getinstrument
+            // otherwise use tdameritradeclient::getinstruments <- ending in 's'
+            let stype = args.value_of("search_type").unwrap();
+            let resp: String;
+            if stype.contains("cusip") {
+                resp = c.getinstrument(search);
+            } else {
                 param.push(Instruments::SearchType(
-                    args.value_of("stype").unwrap(),
+                    args.value_of("search_type").unwrap(),
                 ));
+                resp = c.getinstruments(&param);
             }
-            let resp: String = c.getinstruments(&param);
-            println!("{}", resp)
+            println!("{}", resp);
         }
         None => missing_symbol(),
     }
