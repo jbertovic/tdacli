@@ -7,10 +7,11 @@
 //!
 //! module -> subcommands that match tdameritrade::TDAClient
 //!
-//! `account -> userprinicipals(), account(account_id)`
+//! `account -> userprinicipals(), account(account_id), transactions(account_id), transaction(account_id, transaction_id)`
 //! Defines items that deal with account and user information
 //!
 //! `quote -> quote(symbols), history(symbol, History param), optionchain(symbol, OptionChain param)`
+//!        -> instruments(search), instrument(cusip)
 //! Defines items that deal with quotes either live or historical and expanded option quotes
 //!
 //! `orders` -> getsavedorders(accoundid), getorders(accountid)`
@@ -29,11 +30,6 @@ use tdameritradeclient::TDAClient;
 
 fn main() {
     let matches = cli::cli_matches();
-
-    //TODO: add orders subcommand
-    //TODO: orders: output filled, working, all
-    //TODO: orders: add (need to determine how to specify order desc json)
-    //TODO: orders: delete
 
     match matches.subcommand() {
         (cmd, Some(sub_m)) => {

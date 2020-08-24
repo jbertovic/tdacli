@@ -1,10 +1,8 @@
 [package]
 name = "tdacli"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Jas Bertovic <jas@bertovic.net>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 tdameritradeclient = { git = "https://github.com/jbertovic/tdameritradeclient.git", tag = "v0.2.2" }

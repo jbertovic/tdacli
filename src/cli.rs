@@ -95,6 +95,12 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
         .subcommand(
             SubCommand::with_name("transaction")
                 .about("Retrieve transaction history")
+                .arg(
+                    Arg::with_name("account_id")
+                        .takes_value(true)
+                        .required(true)
+                        .help("Retrieves transactions for linked account_id")
+                )
                 .arg( // symbol shouldn't be an argument with value but ONLY the value
                     Arg::with_name("transaction_type")
                         .long("type")
