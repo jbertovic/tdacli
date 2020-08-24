@@ -1,8 +1,8 @@
 ## TDACLI
 
-A simple CLI wrapper around my tdameritradeclient library. For help enter `tdacli --help`.  This will give you access to help and further subcommands.
+A simple CLI wrapper around my tdameritradeclient library. For help enter `tdacli --help`.  This will give you access to help and further subcommand help categories.
 
-Current subcommands are: quote, history, optionchain, userprincipals, account, auth, refresh, weblink. See below for description on output of `tdaci --help` in the CLI Commands section
+Current subcommands are: userprincipals, account, quote, history, optionchain, instrument, transaction, auth, refresh, weblink. See below for description on output of `tdaci --help` in the CLI Commands section
 
 Environmental Variable Requirements:
 - `TDAUTHTOKEN` on subcommands: account, history, optionchain, quote, userprincipals
@@ -105,9 +105,11 @@ SUBCOMMANDS:
     auth              Retrieves refresh_token using authorization_code grant type
     help              Prints this message or the help of the given subcommand(s)
     history           Retrieve history for one <symbol>.
+    instrument        Retrieve instrument information or search for instrument
     optionchain       Retrieve option chain for one <symbol>
     quote             Retrieve quotes for requested symbols
     refresh           Fetch valid token or renew refresh_token using a refresh_token grant type
+    transaction       Retrieve transaction history
     userprincipals    Retrieves User Principals
     weblink           Gives you the url to get authorization code from TDAmeritrade
 
@@ -156,5 +158,4 @@ and the period as the term or total length of the history.
 
 - [ ] add option for date calculations on History epoch data stamps
 - [ ] Consider adding date conversion using chrono package
-- [ ] orders - adding, deleting, listing
-- [ ] potential to integrate a json query language on output
+- [ ] orders - a way to handle orders with library adding and deleting
