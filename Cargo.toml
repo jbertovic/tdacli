@@ -1,9 +1,9 @@
 [package]
 name = "tdacli"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["Jas Bertovic <jas@bertovic.net>"]
 edition = "2018"
 
 [dependencies]
-tdameritradeclient = { git = "https://github.com/jbertovic/tdameritradeclient.git", tag = "v0.2.2" }
+tdameritradeclient = { git = "https://github.com/jbertovic/tdameritradeclient.git", tag = "v0.4.1" }
 clap = "2.33"
