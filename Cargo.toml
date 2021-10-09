@@ -5,5 +5,5 @@ authors = ["Jas Bertovic <jas@bertovic.net>"]
 edition = "2018"
 
 [dependencies]
-tdameritradeclient = { git = "https://github.com/jbertovic/tdameritradeclient.git", tag = "v0.4.1" }
+tdameritradeclient = { git = "https://github.com/jbertovic/tdameritradeclient.git", tag = "v0.4.2" }
 clap = "2.33"

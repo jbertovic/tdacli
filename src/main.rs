@@ -19,11 +19,16 @@
 //!
 #[macro_use(crate_version)]
 extern crate clap;
-
+/// Accounts and Transaction items
 pub mod account;
+/// Authorization commands
 pub mod auth;
+/// cli setup and configuration
 pub mod cli;
+/// Quote commands for History, Quotes, OptionChain and Insturment details
 pub mod quote;
+/// Create, Modify and Retrieve watchlist
+pub mod watchlist;
 
 use std::env;
 use tdameritradeclient::TDAClient;
@@ -65,6 +70,7 @@ fn main() {
                         "instrument" => quote::instrument(&c, sub_m),
                         "history" => quote::history(&c, sub_m),
                         "optionchain" => quote::optionchain(&c, sub_m),
+                        "watchlist" => watchlist::watchlist(&c, sub_m),
                         _ => {}
                     }
                 }

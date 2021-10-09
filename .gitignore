@@ -1,3 +1,4 @@
 /target
 updateenv.sh
 Cargo.lock
+/json

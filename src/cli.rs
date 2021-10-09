@@ -301,6 +301,23 @@ pub fn cli_matches<'a>() -> ArgMatches<'a> {
                 .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN.\n\r\
                                     '*' indicates default value.")
             )
+        .subcommand(
+            SubCommand::with_name("watchlist")
+                .about("Retrieve Watchlist")
+                .arg(
+                    Arg::with_name("account_id")
+                        .takes_value(true)
+                        .required(true)
+                        .help("Retrieves watchlist for specified account <account_id>")
+                )
+                .arg( 
+                    Arg::with_name("watchlist_id")
+                        //.long("watchlist_id")
+                        .takes_value(true)
+                        .help("Specify <watchlist_id> or retrieve all watchlists")
+                )
+                .after_help("NOTE: Token must be set in env variable: TDAUTHTOKEN.")
+        )
         .after_help("Check env variable requirements for each subcommand.\r\n\
             Token can be retrieved using 'refresh' subcommand if you have a valid refresh_token.\r\n\
             Token can also be issued by using 'weblink' subcommand first to retrieve 'authorization_code'\r\n\

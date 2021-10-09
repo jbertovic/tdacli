@@ -1,6 +1,6 @@
 use clap::ArgMatches;
 use tdameritradeclient::auth::{
-    getcodeweblink, getrefresh_fromrefresh, gettoken_fromrefresh, TDauth,
+    get_code_weblink, get_refresh_from_refresh, get_token_from_refresh, TDauth,
 };
 
 /// Create a link to use to get an authorization_code from tdameritrade
@@ -8,7 +8,7 @@ use tdameritradeclient::auth::{
 pub fn weblink(args: &ArgMatches) {
     println!(
         "{}",
-        getcodeweblink(
+        get_code_weblink(
             args.value_of("clientid").unwrap(),
             args.value_of("redirect").unwrap()
         )
@@ -20,8 +20,8 @@ pub fn auth(args: &ArgMatches, code: String) {
         Some(clientid) => match args.value_of("redirect") {
             Some(redirect) => {
                 let decoded = !args.is_present("decoded");
-                let tdauth = TDauth::new_fromcode(&code, clientid, redirect, decoded);
-                let (_t, refresh) = tdauth.gettokens();
+                let tdauth = TDauth::new_from_code(&code, clientid, redirect, decoded);
+                let (_t, refresh) = tdauth.get_tokens();
                 println!("{}", refresh);
             }
             None => println!("{{ \"error\": \"Missing redirect\"}}"),
@@ -34,11 +34,11 @@ pub fn refresh(args: &ArgMatches, rtoken: String) {
     match args.value_of("clientid") {
         Some(clientid) => {
             // do i need to renew refresh or only token?
-            // need to update tdameritradeclient to include getrefresh_fromrefresh()
+            // need to update tdameritradeclient to include get_refresh_from_refresh()
             let token = if !args.is_present("updaterefresh") {
-                gettoken_fromrefresh(&rtoken, clientid)
+                get_token_from_refresh(&rtoken, clientid)
             } else {
-                getrefresh_fromrefresh(&rtoken, clientid)
+                get_refresh_from_refresh(&rtoken, clientid)
             };
             println!("{}", token);
         }
