@@ -1,36 +1,33 @@
 use clap::ArgMatches;
-use tdameritradeclient::{History, Instruments, OptionChain, TDAClient};
+use tdameritradeclient::{TDAClient, Endpoint, param};
 
 /// Grabs the quote for symbols supplied xxx,yyy,zzz
-/// calls `tdameritradeclient::getquote(symbols)
 pub fn quote(c: &TDAClient, args: &ArgMatches) {
     match args.value_of("symbols") {
         Some(symbols) => {
-            let resp: String = c.getquotes(&symbols);
+            let resp: String = c.get(&Endpoint::Quotes, &[param::Quotes::Symbol(symbols)]);
             println!("{}", resp)
         }
         None => missing_symbol(),
     }
 }
 /// Grabs the instrument information or search
-/// calls `tdameritradeclient::getinstruments(Instrument param)
-/// OR calls `tdameritradeclient::getinstrument(cusip)
 pub fn instrument(c: &TDAClient, args: &ArgMatches) {
     match args.value_of("search") {
         Some(search) => {
-            let mut param: Vec<Instruments> = Vec::new();
-            param.push(Instruments::Symbol(search));
+            let mut param: Vec<param::Instruments> = Vec::new();
+            param.push(param::Instruments::Symbol(search));
             // if cusip is supplied than use invoke tdameritradeclient::getinstrument
             // otherwise use tdameritradeclient::getinstruments <- ending in 's'
             let stype = args.value_of("search_type").unwrap();
             let resp: String;
             if stype.contains("cusip") {
-                resp = c.getinstrument(search);
+                resp = c.get(&Endpoint::Instrument(search), &[param::Empty]);
             } else {
-                param.push(Instruments::SearchType(
+                param.push(param::Instruments::SearchType(
                     args.value_of("search_type").unwrap(),
                 ));
-                resp = c.getinstruments(&param);
+                resp = c.get(&Endpoint::Instruments, &param);
             }
             println!("{}", resp);
         }
@@ -39,14 +36,13 @@ pub fn instrument(c: &TDAClient, args: &ArgMatches) {
 }
 
 /// Grabs the quote history for a symbol using param defining the query
-/// calls `tdameritradeclient::gethistory(symbol, History param)
 pub fn history(c: &TDAClient, args: &ArgMatches) {
     match args.value_of("symbol") {
         Some(symbol) => {
-            let mut param: Vec<History> = Vec::new();
+            let mut param: Vec<param::History> = Vec::new();
             // determine query parameters
             if args.is_present("period") {
-                param.push(History::Period(
+                param.push(param::History::Period(
                     args.value_of("period")
                         .unwrap()
                         .parse()
@@ -54,10 +50,10 @@ pub fn history(c: &TDAClient, args: &ArgMatches) {
                 ));
             }
             if args.is_present("period_type") {
-                param.push(History::PeriodType(args.value_of("period_type").unwrap()));
+                param.push(param::History::PeriodType(args.value_of("period_type").unwrap()));
             }
             if args.is_present("freq") {
-                param.push(History::Frequency(
+                param.push(param::History::Frequency(
                     args.value_of("freq")
                         .unwrap()
                         .parse()
@@ -65,10 +61,10 @@ pub fn history(c: &TDAClient, args: &ArgMatches) {
                 ));
             }
             if args.is_present("freq_type") {
-                param.push(History::FrequencyType(args.value_of("freq_type").unwrap()));
+                param.push(param::History::FrequencyType(args.value_of("freq_type").unwrap()));
             }
             if args.is_present("startdate") {
-                param.push(History::StartDate(
+                param.push(param::History::StartDate(
                     args.value_of("startdate")
                         .unwrap()
                         .parse()
@@ -76,14 +72,14 @@ pub fn history(c: &TDAClient, args: &ArgMatches) {
                 ));
             }
             if args.is_present("enddate") {
-                param.push(History::EndDate(
+                param.push(param::History::EndDate(
                     args.value_of("enddate")
                         .unwrap()
                         .parse()
                         .expect("end date should be a number specifying epoch type"),
                 ));
             }
-            let response: String = c.gethistory(&symbol, &param);
+            let response: String = c.get(&Endpoint::History(&symbol), &param);
             println!("{}", response)
         }
         None => missing_symbol(),
@@ -91,21 +87,20 @@ pub fn history(c: &TDAClient, args: &ArgMatches) {
 }
 
 /// Grabs the quote history for a symbol using param defining the query
-/// calls `tdameritradeclient::getoptionchain(symbol, Option param)
 pub fn optionchain(c: &TDAClient, args: &ArgMatches) {
     match args.value_of("symbol") {
         Some(symbol) => {
-            let mut param: Vec<OptionChain> = Vec::new();
+            let mut param: Vec<param::OptionChain> = Vec::new();
             // determine query parameters
-            param.push(OptionChain::Symbol(symbol));
+            param.push(param::OptionChain::Symbol(symbol));
             if args.is_present("call") {
-                param.push(OptionChain::ContractType("CALL"));
+                param.push(param::OptionChain::ContractType("CALL"));
             }
             if args.is_present("put") {
-                param.push(OptionChain::ContractType("PUT"));
+                param.push(param::OptionChain::ContractType("PUT"));
             }
             if args.is_present("strike_count") {
-                param.push(OptionChain::StrikeCount(
+                param.push(param::OptionChain::StrikeCount(
                     args.value_of("srike_count")
                         .unwrap()
                         .parse()
@@ -113,13 +108,13 @@ pub fn optionchain(c: &TDAClient, args: &ArgMatches) {
                 ));
             }
             if args.is_present("quotes") {
-                param.push(OptionChain::IncludeQuotes(true));
+                param.push(param::OptionChain::IncludeQuotes(true));
             }
             if args.is_present("strategy") {
-                param.push(OptionChain::Strategy(args.value_of("strategy").unwrap()));
+                param.push(param::OptionChain::Strategy(args.value_of("strategy").unwrap()));
             }
             if args.is_present("interval") {
-                param.push(OptionChain::Interval(
+                param.push(param::OptionChain::Interval(
                     args.value_of("interval")
                         .unwrap()
                         .parse()
@@ -127,7 +122,7 @@ pub fn optionchain(c: &TDAClient, args: &ArgMatches) {
                 ));
             }
             if args.is_present("strike") {
-                param.push(OptionChain::Strike(
+                param.push(param::OptionChain::Strike(
                     args.value_of("strike")
                         .unwrap()
                         .parse()
@@ -135,26 +130,26 @@ pub fn optionchain(c: &TDAClient, args: &ArgMatches) {
                 ));
             }
             if args.is_present("range") {
-                param.push(OptionChain::Range(args.value_of("range").unwrap()));
+                param.push(param::OptionChain::Range(args.value_of("range").unwrap()));
             }
             if args.is_present("from") {
-                param.push(OptionChain::FromDate(args.value_of("from").unwrap()));
+                param.push(param::OptionChain::FromDate(args.value_of("from").unwrap()));
             }
             if args.is_present("to") {
-                param.push(OptionChain::ToDate(args.value_of("to").unwrap()));
+                param.push(param::OptionChain::ToDate(args.value_of("to").unwrap()));
             }
             if args.is_present("exp_month") {
-                param.push(OptionChain::ExpireMonth(
+                param.push(param::OptionChain::ExpireMonth(
                     args.value_of("exp_month").unwrap(),
                 ));
             }
             if args.is_present("typeS") {
-                param.push(OptionChain::OptionType("S"));
+                param.push(param::OptionChain::OptionType("S"));
             }
             if args.is_present("typeNS") {
-                param.push(OptionChain::OptionType("NS"));
+                param.push(param::OptionChain::OptionType("NS"));
             }
-            let response: String = c.getoptionchain(&param);
+            let response: String = c.get(&Endpoint::OptionChain, &param);
             println!("{}", response)
         }
         None => missing_symbol(),
