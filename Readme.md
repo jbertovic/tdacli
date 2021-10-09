@@ -5,7 +5,7 @@ A simple CLI wrapper around my tdameritradeclient library. For help enter `tdacl
 Current subcommands are: userprincipals, account, quote, history, optionchain, instrument, transaction, auth, refresh, weblink. See below for description on output of `tdaci --help` in the CLI Commands section
 
 Environmental Variable Requirements:
-- `TDAUTHTOKEN` on subcommands: account, history, optionchain, quote, userprincipals
+- `TDAUTHTOKEN` on subcommands: account, history, optionchain, quote, userprincipals, watchlist
 - `TDREFRESHTOKEN` on subcommands: refresh
 - `TDCODE` on subcommand: auth
 - No Env Variable on subcommand: weblink
@@ -90,7 +90,7 @@ Not sure how to do this in windows?  Please DM me if you know.
 
 ```
 > tdacli --help
-TDAmeritrade API CLI 0.2.0
+TDAmeritrade API CLI 0.3.0
 Command Line Interface into tdameritradeclient rust library
 
 USAGE:
@@ -111,6 +111,7 @@ SUBCOMMANDS:
     refresh           Fetch valid token or renew refresh_token using a refresh_token grant type
     transaction       Retrieve transaction history
     userprincipals    Retrieves User Principals
+    watchlist         Retrieve Watchlist
     weblink           Gives you the url to get authorization code from TDAmeritrade
 
 Check env variable requirements for each subcommand.
