@@ -1,6 +1,6 @@
 ## TDACLI
 
-A simple CLI wrapper around my tdameritradeclient library. For help enter `tdacli --help`.  This will give you access to help and further subcommand help categories.
+A simple CLI wrapper around my [tdameritradeclient](https://github.com/jbertovic/tdameritradeclient) library. For help enter `tdacli --help`.  This will give you access to help and further subcommand help categories.
 
 Current subcommands are: userprincipals, account, quote, history, optionchain, instrument, transaction, auth, refresh, weblink. See below for description on output of `tdaci --help` in the CLI Commands section
 
